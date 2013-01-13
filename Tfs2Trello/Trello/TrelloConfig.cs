@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace Tfs2Trello.Trello
 {
-    public static class TrelloConfig
+    public class TrelloConfig : ITrelloConfig
     {
         private static Dictionary<string, string> usersDictionary;
 
@@ -31,11 +31,15 @@ namespace Tfs2Trello.Trello
             }
         }
 
-        public static string GetTrelloUsername(string name)
+        public string GetTrelloUsername(string name)
         {
             string user;
             usersDictionary.TryGetValue(name, out user);
             return user;
         }
+    }
+
+    public interface ITrelloConfig {
+        string GetTrelloUsername(string name);
     }
 }

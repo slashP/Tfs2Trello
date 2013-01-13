@@ -66,8 +66,15 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JB.Tfs.Common">
-      <HintPath>..\packages\JB.Tfs.Common.0.0.0.5\lib\net40\JB.Tfs.Common.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration">
+      <HintPath>..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Client, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.TeamFoundation.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -94,18 +101,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TfsToTrelloIntegration.cs" />
+    <Compile Include="Integration\ITfsTrelloIntegration.cs" />
+    <Compile Include="Integration\TfsTrelloIntegration.cs" />
+    <Compile Include="Ioc.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tfs\ITfsClient.cs" />
     <Compile Include="Tfs\TfsClient.cs" />
     <Compile Include="Tfs\TfsWorkItem.cs" />
     <Compile Include="Trello\Credentials.cs" />
+    <Compile Include="Trello\ITrelloClient.cs" />
     <Compile Include="Trello\TrelloClient.cs" />
     <Compile Include="Trello\TrelloConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
     <None Include="TrelloConsole_TemporaryKey.pfx" />

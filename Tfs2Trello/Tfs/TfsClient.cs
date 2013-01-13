@@ -7,11 +7,9 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace Tfs2Trello.Tfs
 {
-    public class TfsClient
+    public class TfsClient : ITfsClient
     {
         private DateTime _lastUpdate = DateTime.MinValue;
-
-        public DateTime LastUpdate { set { _lastUpdate = value; } }
 
         public IEnumerable<TfsWorkItem> GetTfsWorkItemsToUpdate()
         {
@@ -41,6 +39,11 @@ namespace Tfs2Trello.Tfs
             return workItemCollection.Cast<WorkItem>().Select(ToTfsWorkItem);
         }
 
+        public void SetLastUpdate(DateTime now)
+        {
+            _lastUpdate = now;
+        }
+
         private static TfsWorkItem ToTfsWorkItem(WorkItem workItem)
         {
             return new TfsWorkItem {
@@ -48,7 +51,7 @@ namespace Tfs2Trello.Tfs
                 AssignedTo = workItem.Fields["Assigned To"].Value as string,
                 State = workItem.State,
                 Title = workItem.Title,
-                WorkItemType = workItem.Type,
+                WorkItemTypeName = workItem.Type.Name,
                 Id = workItem.Id
             };
         }
