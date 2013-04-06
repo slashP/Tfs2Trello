@@ -11,9 +11,9 @@ namespace Tfs2Trello.Trello
     {
         private readonly ITrelloConfig _trelloConfig;
         private readonly ITrello _trello;
-        private static IDictionary<string, string> lists = new Dictionary<string, string>();
-        private static List<TfsCard> cards;
-        private static IDictionary<string, string> members = new Dictionary<string, string>();
+        private static IDictionary<string, string> _lists = new Dictionary<string, string>();
+        private static List<TfsCard> _cards;
+        private static IDictionary<string, string> _members = new Dictionary<string, string>();
         private static readonly string TrelloBoardId = ConfigurationManager.AppSettings["BoardId"];
         public static readonly BoardId BoardId = new BoardId(TrelloBoardId);
 
@@ -22,9 +22,9 @@ namespace Tfs2Trello.Trello
             _trelloConfig = trelloConfig;
             _trello = Ioc.Container.Resolve<ITrello>(new ParameterOverride("key", Credentials.Key));
             _trello.Authorize(Credentials.Token);
-            lists = GetLists();
-            members = GetMembers();
-            cards = new List<TfsCard>();
+            _lists = GetLists();
+            _members = GetMembers();
+            _cards = new List<TfsCard>();
         }
 
         public void AddOrUpdateCard(string listName, string name, string comment, string user, int id, Color workItemColor)
@@ -44,7 +44,7 @@ namespace Tfs2Trello.Trello
         private void AddOrUpdateCard(string listName, string name, Color color, string comment, string user, int id)
         {
             var username = _trelloConfig.GetTrelloUsername(user);
-            if (cards.Any(x => x.TfsId == id)) {
+            if (_cards.Any(x => x.TfsId == id)) {
                 UpdateTask(name, color, comment, username, id, listName);
             }
             else {
@@ -57,13 +57,13 @@ namespace Tfs2Trello.Trello
             var card = _trello.Cards.Add(name, GetListIdByName(listName));
             Console.WriteLine("Added work item: {0}", name);
             var tfsCard = card.ToTfsCard(id, listName);
-            cards.Add(tfsCard);
+            _cards.Add(tfsCard);
             SetValues(listName, name, username, color, comment, tfsCard);
         }
 
         private void UpdateTask(string name, Color color, string comment, string user, int id, string listName)
         {
-            var card = cards.First(x => x.TfsId == id);
+            var card = _cards.First(x => x.TfsId == id);
             SetValues(listName, name, user, color, comment, card);
             Console.WriteLine("Updated work item: {0}", name);
         }
@@ -109,12 +109,12 @@ namespace Tfs2Trello.Trello
         private void SetMember(string user, TfsCard card)
         {
             if (string.IsNullOrEmpty(user) || card.Username == user) return;
-            if (!members.ContainsKey(user)) {
+            if (!_members.ContainsKey(user)) {
                 Console.WriteLine("Users not defined correctly in config ({0})", user);
                 Console.ReadKey();
                 return;
             }
-            var idOrUsername = members[user];
+            var idOrUsername = _members[user];
             _trello.Cards.AddMember(card, new MemberId(idOrUsername));
             card.Username = user;
         }
@@ -133,12 +133,12 @@ namespace Tfs2Trello.Trello
 
         private static IListId GetListIdByName(string listName)
         {
-            if (!lists.ContainsKey(listName)) {
+            if (!_lists.ContainsKey(listName)) {
                 Console.WriteLine("The names of the lists does not match the possible states of work items. ({0})", listName);
                 Console.ReadKey();
                 Environment.Exit(0);
             }
-            return new ListId(lists[listName]);
+            return new ListId(_lists[listName]);
         }
     }
 

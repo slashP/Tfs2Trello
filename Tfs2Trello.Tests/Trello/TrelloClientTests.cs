@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using FakeItEasy;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +12,7 @@ namespace Tfs2Trello.Tests.Trello
         private const string ListName = "my list";
         private ITrello _trelloFake;
         private TrelloClient _trelloClient;
-        private Color TaskColor = Color.Blue;
+        private const Color TaskColor = Color.Blue;
 
         [TestInitialize]
         public void Init()

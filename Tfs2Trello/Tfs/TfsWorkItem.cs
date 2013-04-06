@@ -1,5 +1,4 @@
-﻿using Microsoft.TeamFoundation.WorkItemTracking.Client;
-
+﻿
 namespace Tfs2Trello.Tfs
 {
     public class TfsWorkItem

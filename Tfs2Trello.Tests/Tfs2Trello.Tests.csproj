@@ -50,7 +50,7 @@
     <Reference Include="System" />
     <Reference Include="TrelloNet, Version=0.5.6.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Tfs2Trello\bin\Release\TrelloNet.dll</HintPath>
+      <HintPath>..\packages\TrelloNet.0.5.6\lib\net40-Client\TrelloNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>

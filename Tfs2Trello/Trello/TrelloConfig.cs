@@ -8,7 +8,7 @@ namespace Tfs2Trello.Trello
 {
     public class TrelloConfig : ITrelloConfig
     {
-        private static Dictionary<string, string> usersDictionary;
+        private static Dictionary<string, string> _usersDictionary;
 
         static TrelloConfig()
         {
@@ -22,7 +22,7 @@ namespace Tfs2Trello.Trello
             try {
                 var users = configFile.Descendants("users").Descendants("user")
                         .Select(x => new { Name = x.Element("name").Value, TrelloUserName = x.Element("trelloUsername").Value });
-                usersDictionary = users.ToDictionary(x => x.Name, x => x.TrelloUserName);
+                _usersDictionary = users.ToDictionary(x => x.Name, x => x.TrelloUserName);
             }
             catch (NullReferenceException) {
                 Console.WriteLine("Users are not correctly defined in the config file");
@@ -34,7 +34,7 @@ namespace Tfs2Trello.Trello
         public string GetTrelloUsername(string name)
         {
             string user;
-            usersDictionary.TryGetValue(name, out user);
+            _usersDictionary.TryGetValue(name, out user);
             return user;
         }
     }
