@@ -1,0 +1,16 @@
+﻿PollingInterval = 30000
+Users = [ 
+	["Per-Kristian Helland", "Tom Preston-Werner"], # TFS names as seen in the "Assigned To"
+	["perkristianhelland", "tpwerner"] # Trello user names, corresponding to TFS name
+]
+
+[Tfs]
+Iteration = "Trello\\TfsIteration 1" # Remember to escape backslashes
+WorkItemTypes = ["Task", "Bug", "User Story"]
+Url = "http://localhost:8080/tfs/DefaultCollection"
+Project = "TrelloTfs"
+
+[Trello]
+Key = "INSERT_YOUR_TRELLO_APPLICATION_KEY"
+Token = "INSERT_YOUR_TRELLO_TOKEN"
+BoardId = "INSERT_YOUR_TRELLO_BOARD_ID"

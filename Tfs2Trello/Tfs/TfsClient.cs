@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Tfs2Trello.Trello;
 
 namespace Tfs2Trello.Tfs
 {
     public class TfsClient : ITfsClient
     {
+        private readonly ITrelloConfig _trelloConfig;
         private DateTime _lastUpdate = DateTime.MinValue;
+
+        public TfsClient(ITrelloConfig trelloConfig)
+        {
+            _trelloConfig = trelloConfig;
+        }
 
         public IEnumerable<TfsWorkItem> GetTfsWorkItemsToUpdate()
         {
@@ -20,7 +26,7 @@ namespace Tfs2Trello.Tfs
                            Where [Iteration Path] = '{0}'
                            And [Work Item Type] IN ({1})
                            And [Changed Date] > '{2}'
-                           And [Team Project] = '{3}'", Iteration, WorkItemTypes, _lastUpdate, Project);
+                           And [Team Project] = '{3}'", _trelloConfig.Iteration, WorkItemTypes, _lastUpdate, _trelloConfig.TfsProject);
             var query = new Query(workItemStore, wiql, null, false);
             var cancellation = query.BeginQuery();
             return query.EndQuery(cancellation).Cast<WorkItem>().Select(ToTfsWorkItem);
@@ -34,7 +40,7 @@ namespace Tfs2Trello.Tfs
                            From WorkItems
                            Where [Iteration Path] = '{0}'
                            And [Work Item Type] IN ({1})
-                           And [Team Project] = '{2}'", Iteration, WorkItemTypes, Project);
+                           And [Team Project] = '{2}'", _trelloConfig.Iteration, WorkItemTypes, _trelloConfig.TfsProject);
             var workItemCollection = workItemStore.Query(wiql);
             return workItemCollection.Cast<WorkItem>().Select(ToTfsWorkItem);
         }
@@ -56,18 +62,14 @@ namespace Tfs2Trello.Tfs
             };
         }
 
-        private static string Iteration { get { return ConfigurationManager.AppSettings["Iteration"]; } }
-
-        private static string Project { get { return ConfigurationManager.AppSettings["TfsProject"]; } }
-
-        private static string WorkItemTypes 
+        private string WorkItemTypes 
         {
-            get { return string.Join(", ", ConfigurationManager.AppSettings["WorkItemTypes"].Split(',').Select(x => "'" + x.Trim() + "'")); }
+            get { return string.Join(", ", _trelloConfig.WorkItems); }
         }
 
-        private static WorkItemStore GetWorkItemStore()
+        private WorkItemStore GetWorkItemStore()
         {
-            var tpc = new TfsTeamProjectCollection(new Uri(ConfigurationManager.AppSettings["TfsUrl"]));
+            var tpc = new TfsTeamProjectCollection(new Uri(_trelloConfig.TfsUrl));
             var workItemStore = tpc.GetService<WorkItemStore>();
             return workItemStore;
         }

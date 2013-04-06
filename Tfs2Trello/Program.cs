@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Threading;
 using Microsoft.Practices.Unity;
 using Tfs2Trello.Integration;
+using Tfs2Trello.Trello;
 
 namespace Tfs2Trello
 {
@@ -11,12 +12,14 @@ namespace Tfs2Trello
         static void Main(string[] args)
         {
             var container = Ioc.Configure(new UnityContainer());
+            var config = container.Resolve<ITrelloConfig>();
+            config.Initialize();
             try {
                 var tfs = container.Resolve<ITfsTrelloIntegration>();
                 tfs.Initialize();
-                Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["PollingInterval"])); // Sleep extra at initalize so everything finishes
+                Thread.Sleep((int)config.PollingInterval); // Sleep extra at initalize so everything finishes
                 while (true) {
-                    Thread.Sleep(int.Parse(ConfigurationManager.AppSettings["PollingInterval"]));
+                    Thread.Sleep((int)config.PollingInterval);
                     tfs.UpdateTrelloBoard();
                 }
             }

@@ -23,7 +23,9 @@ namespace Tfs2Trello.Tests.Trello
             unityContainer.RegisterInstance(_trelloFake);
             var trelloLists = new []{new List{Name = ListName, Id = "1"}};
             A.CallTo(() => _trelloFake.Lists.ForBoard(TrelloClient.BoardId, ListFilter.All)).Returns(trelloLists);
-            _trelloClient = new TrelloClient(A.Fake<ITrelloConfig>());
+            var config = A.Fake<ITrelloConfig>();
+            A.CallTo(() => config.BoardId).Returns("id");
+            _trelloClient = new TrelloClient(config);
         }
 
         [TestCleanup]

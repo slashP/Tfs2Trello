@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.Unity;
 using TrelloNet;
@@ -14,17 +13,17 @@ namespace Tfs2Trello.Trello
         private static IDictionary<string, string> _lists = new Dictionary<string, string>();
         private static List<TfsCard> _cards;
         private static IDictionary<string, string> _members = new Dictionary<string, string>();
-        private static readonly string TrelloBoardId = ConfigurationManager.AppSettings["BoardId"];
-        public static readonly BoardId BoardId = new BoardId(TrelloBoardId);
+        public static BoardId BoardId;
 
         public TrelloClient(ITrelloConfig trelloConfig)
         {
             _trelloConfig = trelloConfig;
-            _trello = Ioc.Container.Resolve<ITrello>(new ParameterOverride("key", Credentials.Key));
-            _trello.Authorize(Credentials.Token);
+            _trello = Ioc.Container.Resolve<ITrello>(new ParameterOverride("key", _trelloConfig.TrelloKey));
+            _trello.Authorize(_trelloConfig.TrelloToken);
             _lists = GetLists();
             _members = GetMembers();
             _cards = new List<TfsCard>();
+            BoardId = new BoardId(trelloConfig.BoardId);
         }
 
         public void AddOrUpdateCard(string listName, string name, string comment, string user, int id, Color workItemColor)
@@ -34,7 +33,7 @@ namespace Tfs2Trello.Trello
 
         public void DeleteAll()
         {
-            var board = _trello.Boards.WithId(TrelloBoardId);
+            var board = _trello.Boards.WithId(_trelloConfig.BoardId);
             var allCards = _trello.Cards.ForBoard(board, BoardCardFilter.All);
             foreach (var card in allCards) {
                 _trello.Cards.Delete(card);
